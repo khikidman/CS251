@@ -39,6 +39,8 @@ int main() {
   cout << "-------------------" << endl;
   cout << endl;
 
+
+
   do {
     printMenu();
     cout << endl << "Enter a command (case does not matter): ";
@@ -47,6 +49,13 @@ int main() {
     // input buffer issues relating to using both >> and getline
     getline(cin, command);
     cout << endl;
+
+    ifstream fin("dictionary.txt");
+    vector<string> dictionary;
+    string word;
+    while (fin >> word) {
+      dictionary.push_back(word);
+    }
 
     if (command == "R" || command == "r") {
       string seed_str;
@@ -123,7 +132,11 @@ void caesarEncryptCommand() {
 #pragma region CaesarDec
 
 void rot(vector<string>& strings, int amount) {
-  // TODO: student
+  for (string& s : strings) {
+    for (char& c : s) {
+      c = rot(c, 26 - amount);
+    }
+  }
 }
 
 string clean(const string& s) {
