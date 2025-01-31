@@ -39,7 +39,19 @@ int main() {
   cout << "-------------------" << endl;
   cout << endl;
 
+  //!---------
+  string test = "This is a n0n--clean--string!";
+  vector<string> separatedTest = splitBySpaces(test);
+  for (string s : separatedTest) {
+    cout << (clean(s)) << endl;
+  }
 
+  // ifstream fin("dictionary.txt");
+  vector<string> dictionary;
+  // string word;
+  // while (fin >> word) {
+  //   dictionary.push_back(word);
+  // }
 
   do {
     printMenu();
@@ -49,13 +61,6 @@ int main() {
     // input buffer issues relating to using both >> and getline
     getline(cin, command);
     cout << endl;
-
-    ifstream fin("dictionary.txt");
-    vector<string> dictionary;
-    string word;
-    while (fin >> word) {
-      dictionary.push_back(word);
-    }
 
     if (command == "R" || command == "r") {
       string seed_str;
@@ -67,6 +72,10 @@ int main() {
 
     if (command == "C" || command == "c") {
       caesarEncryptCommand();
+    }
+
+    if (command == "D" || command == "d") {
+      caesarDecryptCommand(dictionary);
     }
 
     cout << endl;
@@ -140,18 +149,36 @@ void rot(vector<string>& strings, int amount) {
 }
 
 string clean(const string& s) {
-  // TODO: student
-  return "";
+  string cleanedString = "";
+  for (char c : s) {
+    if (isalpha(c)) {
+      cleanedString += toupper(c);
+    }
+  }
+  return cleanedString;
 }
 
 vector<string> splitBySpaces(const string& s) {
-  // TODO: student
-  return vector<string>{};
+  vector<string> words;
+  for (int i = 0; i < s.size(); ++i) {
+    size_t spaceIndex = s.find(' ');
+    if (spaceIndex) {
+      words.push_back(s.substr(i, spaceIndex - 1));
+      i = spaceIndex;
+    }
+  }
+  return words;
 }
 
 string joinWithSpaces(const vector<string>& words) {
-  // TODO: student
-  return "";
+  string result = "";
+  for (int i = 0; i < words.size(); i++) {
+    result += words.at(i);
+    if (i < words.size() - 1) {
+      result += " ";
+    }
+  }
+  return result;
 }
 
 int numWordsIn(const vector<string>& words, const vector<string>& dict) {
