@@ -71,6 +71,10 @@ int main() {
       caesarDecryptCommand(dictionary);
     }
 
+    if (command == "A" || command == "a") {
+      applyRandSubstCipherCommand();
+    }
+
     cout << endl;
 
   } while (!(command == "x" || command == "X") && !cin.eof());
@@ -229,12 +233,25 @@ void caesarDecryptCommand(const vector<string>& dict) {
 #pragma region SubstEnc
 
 string applySubstCipher(const vector<char>& cipher, const string& s) {
-  // TODO: student
-  return "";
+  string encryptedText;
+  for (char c : s) {
+    if (isalpha(c)) {
+      encryptedText += cipher[toupper(c) % 65];
+    }
+  }
+  return encryptedText;
 }
 
 void applyRandSubstCipherCommand() {
-  // TODO: student
+  string line;
+  cout << "Enter the tet you want to apply the random substitution cipher to: ";
+  getline(cin, line);
+
+  vector<char> cipher = genRandomSubstCipher();
+
+  string encryptedLine = applySubstCipher(cipher, line);
+  cout << "Encrypted text: " << endl;
+  cout << encryptedLine << endl;
 }
 
 #pragma endregion SubstEnc
