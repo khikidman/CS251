@@ -39,19 +39,12 @@ int main() {
   cout << "-------------------" << endl;
   cout << endl;
 
-  //!---------
-  string test = "This is a n0n--clean--string!";
-  vector<string> separatedTest = splitBySpaces(test);
-  for (string s : separatedTest) {
-    cout << (clean(s)) << endl;
-  }
-
-  // ifstream fin("dictionary.txt");
+  ifstream fin("dictionary.txt");
   vector<string> dictionary;
-  // string word;
-  // while (fin >> word) {
-  //   dictionary.push_back(word);
-  // }
+  string word;
+  while (fin >> word) {
+    dictionary.push_back(word);
+  }
 
   do {
     printMenu();
@@ -160,12 +153,17 @@ string clean(const string& s) {
 
 vector<string> splitBySpaces(const string& s) {
   vector<string> words;
-  for (int i = 0; i < s.size(); ++i) {
-    size_t spaceIndex = s.find(' ');
-    if (spaceIndex) {
-      words.push_back(s.substr(i, spaceIndex - 1));
-      i = spaceIndex;
+  int i = 0;
+  for (i; i < s.size(); ++i) {
+    size_t spaceIndex = s.find(' ', i);
+    if (spaceIndex != string::npos) {
+      words.push_back(s.substr(i, spaceIndex - i));
+      i = spaceIndex + 1;
     }
+  }
+
+  if (i < s.size()) {
+    words.push_back(s.substr(i));
   }
   return words;
 }
@@ -182,12 +180,54 @@ string joinWithSpaces(const vector<string>& words) {
 }
 
 int numWordsIn(const vector<string>& words, const vector<string>& dict) {
-  // TODO: student
-  return 0;
+  int numWords = 0;
+  for (string word : words) {
+    bool found = false;
+    for (string dictWord : dict) {
+      if (word == dictWord) {
+        found = true;
+      }
+    }
+    if (found) {
+      numWords++;
+    }
+  }
+  return numWords;
 }
 
 void caesarDecryptCommand(const vector<string>& dict) {
-  // TODO: student
+  stringstream encryptedText;
+  string word;
+  bool firstWord = true;
+
+  while (cin >> word) {
+    if (!firstWord) {
+      encryptedText << " ";
+    }
+    encryptedText << word;
+    firstWord = false;
+  }
+
+  vector<string> words = splitBySpaces(encryptedText.str());
+  for (string& s : words) {
+    s = clean(s);
+  }
+
+  int numDecryptionsFound = 0;
+
+  for (int i = 0; i < 26; i++) {
+    rot(words, 1);
+    int numWords = numWordsIn(words, dict);
+    if (numWords > words.size()/2) {
+      cout << joinWithSpaces(words) << endl;
+      numDecryptionsFound++;
+    }
+  }
+
+  if (numDecryptionsFound == 0) {
+    cout << "No good decryptions found" << endl;
+  }
+
 }
 
 #pragma endregion CaesarDec
