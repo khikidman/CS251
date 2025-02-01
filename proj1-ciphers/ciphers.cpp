@@ -107,7 +107,7 @@ string rot(const string& line, int amount) {
   string res = "";
   for (char c : line) {
     if (isalpha(c)) {
-      res += rot(toupper(c), amount);
+      res += rot(toupper(c), amount % 26);
     } else if (isspace(c)) {
       res += c;
     }
@@ -136,7 +136,9 @@ void caesarEncryptCommand() {
 void rot(vector<string>& strings, int amount) {
   for (string& s : strings) {
     for (char& c : s) {
-      c = rot(c, 26 - amount);
+      if (isalpha(c)) {
+        c = ALPHABET[(ALPHABET.find(c) + amount) % 26];
+      }
     }
   }
 }
@@ -153,18 +155,18 @@ string clean(const string& s) {
 
 vector<string> splitBySpaces(const string& s) {
   vector<string> words;
-  int i = 0;
-  for (i; i < s.size(); ++i) {
-    size_t spaceIndex = s.find(' ', i);
-    if (spaceIndex != string::npos) {
-      words.push_back(s.substr(i, spaceIndex - i));
-      i = spaceIndex + 1;
+  int start = 0;
+
+  while (start < s.size()) {
+    size_t spaceIndex = s.find(' ', start);
+    if (spaceIndex == string::npos) {
+      words.push_back(s.substr(start));
+      break;
     }
+    words.push_back(s.substr(start, spaceIndex - start));
+    start = spaceIndex + 1;
   }
 
-  if (i < s.size()) {
-    words.push_back(s.substr(i));
-  }
   return words;
 }
 
@@ -196,29 +198,22 @@ int numWordsIn(const vector<string>& words, const vector<string>& dict) {
 }
 
 void caesarDecryptCommand(const vector<string>& dict) {
-  stringstream encryptedText;
-  string word;
-  bool firstWord = true;
+  string line;
+  cout << "Enter an encrypted text you want to decipher: ";
+  getline(cin, line);
 
-  while (cin >> word) {
-    if (!firstWord) {
-      encryptedText << " ";
-    }
-    encryptedText << word;
-    firstWord = false;
-  }
-
-  vector<string> words = splitBySpaces(encryptedText.str());
+  vector<string> words = splitBySpaces(line);
   for (string& s : words) {
     s = clean(s);
   }
 
   int numDecryptionsFound = 0;
 
+  cout << "Possible decryptions: " << endl;
   for (int i = 0; i < 26; i++) {
     rot(words, 1);
     int numWords = numWordsIn(words, dict);
-    if (numWords > words.size()/2) {
+    if (numWords > words.size() / 2) {
       cout << joinWithSpaces(words) << endl;
       numDecryptionsFound++;
     }
@@ -227,7 +222,6 @@ void caesarDecryptCommand(const vector<string>& dict) {
   if (numDecryptionsFound == 0) {
     cout << "No good decryptions found" << endl;
   }
-
 }
 
 #pragma endregion CaesarDec
