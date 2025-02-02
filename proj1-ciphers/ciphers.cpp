@@ -193,7 +193,9 @@ vector<string> splitBySpaces(const string& s) {
       words.push_back(s.substr(start));
       break;
     }
-    words.push_back(s.substr(start, spaceIndex - start));
+    if (s[start] != ' ') {
+      words.push_back(s.substr(start, spaceIndex - start));
+    }
     start = spaceIndex + 1;
   }
 
@@ -237,20 +239,25 @@ void caesarDecryptCommand(const vector<string>& dict) {
     s = clean(s);
   }
 
-  int numDecryptionsFound = 0;
+  vector<string> validDecryptions;
 
-  cout << "Possible decryptions: " << endl;
   for (int i = 0; i < 26; i++) {
-    rot(words, 1);
-    int numWords = numWordsIn(words, dict);
-    if (numWords > words.size() / 2) {
-      cout << joinWithSpaces(words) << endl;
-      numDecryptionsFound++;
+    vector<string> rotatedWords = words;
+    rot(rotatedWords, i);
+
+    int numWords = numWordsIn(rotatedWords, dict);
+
+    if (numWords > rotatedWords.size() / 2) {
+      validDecryptions.push_back(joinWithSpaces(rotatedWords));
     }
   }
 
-  if (numDecryptionsFound == 0) {
+  if (validDecryptions.empty()) {
     cout << "No good decryptions found" << endl;
+  }
+
+  for (string decryption : validDecryptions) {
+    cout << decryption << endl;
   }
 }
 
