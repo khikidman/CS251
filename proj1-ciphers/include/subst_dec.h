@@ -35,3 +35,14 @@ void computeEnglishnessCommand(const QuadgramScorer& scorer);
  * Non-letter characters should be preserved.
  */
 void decryptSubstCipherCommand(const QuadgramScorer& scorer);
+
+// ========== Substitution Cipher File Decoder ==========
+
+/**
+ * Runs the substitution cipher decryption routine on a file. Prompts from the console
+ * input (cin) once to get the file name of the encrypted file and the file name of the output file, then runs hill-climbing 25 times to
+ * find the best decryption. Outputs the best decryption, according to `scorer`, to the output file.
+ *
+ * Non-letter characters should be preserved.
+ */
+void decryptSubstFileCommand(const QuadgramScorer& scorer);

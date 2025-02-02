@@ -46,6 +46,19 @@ int main() {
     dictionary.push_back(word);
   }
 
+  vector<string> quadgrams;
+  vector<int> counts;
+  ifstream file("english_quadgrams.txt");
+  string line;
+  while(getline(file, line)) {
+    int end = line.find(',');
+    quadgrams.push_back(line.substr(0, end));
+    counts.push_back(stoi(line.substr(end + 1, line.size() - end)));
+  }
+
+  QuadgramScorer scorer(quadgrams, counts);
+
+
   do {
     printMenu();
     cout << endl << "Enter a command (case does not matter): ";
@@ -74,6 +87,19 @@ int main() {
     if (command == "A" || command == "a") {
       applyRandSubstCipherCommand();
     }
+
+    if (command == "E" || command == "e") {
+      computeEnglishnessCommand(scorer);
+    }
+
+    if (command == "S" || command == "s") {
+      decryptSubstCipherCommand(scorer);
+    }
+
+    if (command == "F" || command == "f") {
+      decryptSubstFileCommand(scorer);
+    }
+    
 
     cout << endl;
 
@@ -238,6 +264,9 @@ string applySubstCipher(const vector<char>& cipher, const string& s) {
     if (isalpha(c)) {
       encryptedText += cipher[toupper(c) % 65];
     }
+    else {
+      encryptedText += c;
+    }
   }
   return encryptedText;
 }
@@ -259,22 +288,128 @@ void applyRandSubstCipherCommand() {
 #pragma region SubstDec
 
 double scoreString(const QuadgramScorer& scorer, const string& s) {
-  // TODO: student
-  return 0.0;
+  double score = 0.0;
+  int quadgramSize = 4;
+  for (int i = 0; i <= s.size() - quadgramSize; ++i) {
+    score += scorer.getScore(s.substr(i, quadgramSize));
+  }
+  return score;
 }
 
 void computeEnglishnessCommand(const QuadgramScorer& scorer) {
-  // TODO: student
+  string line, s;
+  cout << "Enter a string to compute its Englishness: ";
+  getline(cin, line);
+  vector<string> words = splitBySpaces(line);
+  for (string w : words) {
+    w = clean(w);
+    s += w;
+  }
+  double score = scoreString(scorer, s);
+  cout << "Englishness: " << score << endl;
 }
 
 vector<char> decryptSubstCipher(const QuadgramScorer& scorer,
                                 const string& ciphertext) {
-  // TODO: student
-  return vector<char>{};
+  vector<char> key = genRandomSubstCipher();
+  vector<char> bestKey = key;
+  int trials = 0;
+  double highestScore = scoreString(scorer, ciphertext);
+  while (trials < 1000) {
+    int letter1 = Random::randInt(25);
+    int letter2 = Random::randInt(25);
+    while (letter2 == letter1) {
+      letter2 = Random::randInt(25);
+    }
+
+    swap(key[letter1], key[letter2]);
+
+    double currentScore = scoreString(scorer, applySubstCipher(key, ciphertext));
+
+    if (currentScore > highestScore) {
+      bestKey = key;
+      highestScore = currentScore;
+      trials = 0;
+    } else {
+      swap(key[letter1], key[letter2]);
+    }
+
+    trials++;
+  }
+  cout << applySubstCipher(bestKey, ciphertext) << endl;
+
+  return bestKey;
 }
 
 void decryptSubstCipherCommand(const QuadgramScorer& scorer) {
-  // TODO: student
+  string line;
+  cout << "Enter an encrypted text to decipher: ";
+  getline(cin, line);
+  string cleanedLine;
+  vector<string> words = splitBySpaces(line);
+
+  for (string w : words) {
+    cleanedLine += clean(w);
+  }
+
+  vector<char> bestKey;
+  double highestScore = scoreString(scorer, applySubstCipher(genRandomSubstCipher(), cleanedLine));
+  for (int i = 0; i < 25; ++i) {
+    vector<char> currentKey = decryptSubstCipher(scorer, cleanedLine);
+    double currentScore = scoreString(scorer, applySubstCipher(currentKey, cleanedLine));
+    if (currentScore > highestScore) {
+      highestScore = currentScore;
+      bestKey = currentKey;
+    }
+  }
+
+  cout << "Best decryption found: " << applySubstCipher(bestKey, line);
+}
+
+void decryptSubstFileCommand(const QuadgramScorer& scorer) {
+  string inputFileName;
+  string outputFileName;
+  string line;
+  string cleanText;
+  vector<string> fileLines;
+
+  cout << "Enter the name of an encrypted file to decipher: ";
+  getline(cin, inputFileName);
+  cout << "Enter the name of the output file: ";
+  getline(cin, outputFileName);
+
+  ifstream fin(inputFileName);
+
+
+  while (getline(fin, line)) {
+    fileLines.push_back(line);
+    vector<string> words = splitBySpaces(line);
+    for (string w : words) {
+      cleanText += clean(w);
+    }
+  }
+  fin.close();
+  
+
+  vector<char> bestKey;
+  double highestScore = scoreString(scorer, applySubstCipher(genRandomSubstCipher(), cleanText));
+  for (int i = 0; i < 25; ++i) {
+    vector<char> currentKey = decryptSubstCipher(scorer, cleanText);
+    double currentScore = scoreString(scorer, applySubstCipher(currentKey, cleanText));
+    if (currentScore > highestScore) {
+      highestScore = currentScore;
+      bestKey = currentKey;
+    }
+  }
+
+  ofstream fout(outputFileName);
+
+  for (string originalLine : fileLines) {
+    fout << applySubstCipher(bestKey, originalLine) << endl;
+  }
+
+  fout.close();
+  cout << "Decrypted text written to " << outputFileName << endl;
 }
 
 #pragma endregion SubstDec
