@@ -31,6 +31,8 @@ const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
  */
 void printMenu();
 
+void decryptSubstFileCommand(const QuadgramScorer& scorer);
+
 int main() {
   Random::seed(time(NULL));
   string command;
@@ -50,14 +52,13 @@ int main() {
   vector<int> counts;
   ifstream file("english_quadgrams.txt");
   string line;
-  while(getline(file, line)) {
+  while (getline(file, line)) {
     int end = line.find(',');
     quadgrams.push_back(line.substr(0, end));
     counts.push_back(stoi(line.substr(end + 1, line.size() - end)));
   }
 
   QuadgramScorer scorer(quadgrams, counts);
-
 
   do {
     printMenu();
@@ -99,7 +100,6 @@ int main() {
     if (command == "F" || command == "f") {
       decryptSubstFileCommand(scorer);
     }
-    
 
     cout << endl;
 
@@ -263,8 +263,7 @@ string applySubstCipher(const vector<char>& cipher, const string& s) {
   for (char c : s) {
     if (isalpha(c)) {
       encryptedText += cipher[toupper(c) % 65];
-    }
-    else {
+    } else {
       encryptedText += c;
     }
   }
@@ -324,7 +323,8 @@ vector<char> decryptSubstCipher(const QuadgramScorer& scorer,
 
     swap(key[letter1], key[letter2]);
 
-    double currentScore = scoreString(scorer, applySubstCipher(key, ciphertext));
+    double currentScore =
+        scoreString(scorer, applySubstCipher(key, ciphertext));
 
     if (currentScore > highestScore) {
       bestKey = key;
@@ -353,10 +353,12 @@ void decryptSubstCipherCommand(const QuadgramScorer& scorer) {
   }
 
   vector<char> bestKey;
-  double highestScore = scoreString(scorer, applySubstCipher(genRandomSubstCipher(), cleanedLine));
+  double highestScore = scoreString(
+      scorer, applySubstCipher(genRandomSubstCipher(), cleanedLine));
   for (int i = 0; i < 25; ++i) {
     vector<char> currentKey = decryptSubstCipher(scorer, cleanedLine);
-    double currentScore = scoreString(scorer, applySubstCipher(currentKey, cleanedLine));
+    double currentScore =
+        scoreString(scorer, applySubstCipher(currentKey, cleanedLine));
     if (currentScore > highestScore) {
       highestScore = currentScore;
       bestKey = currentKey;
@@ -380,7 +382,6 @@ void decryptSubstFileCommand(const QuadgramScorer& scorer) {
 
   ifstream fin(inputFileName);
 
-
   while (getline(fin, line)) {
     fileLines.push_back(line);
     vector<string> words = splitBySpaces(line);
@@ -389,13 +390,14 @@ void decryptSubstFileCommand(const QuadgramScorer& scorer) {
     }
   }
   fin.close();
-  
 
   vector<char> bestKey;
-  double highestScore = scoreString(scorer, applySubstCipher(genRandomSubstCipher(), cleanText));
+  double highestScore =
+      scoreString(scorer, applySubstCipher(genRandomSubstCipher(), cleanText));
   for (int i = 0; i < 25; ++i) {
     vector<char> currentKey = decryptSubstCipher(scorer, cleanText);
-    double currentScore = scoreString(scorer, applySubstCipher(currentKey, cleanText));
+    double currentScore =
+        scoreString(scorer, applySubstCipher(currentKey, cleanText));
     if (currentScore > highestScore) {
       highestScore = currentScore;
       bestKey = currentKey;
