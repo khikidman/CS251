@@ -6,6 +6,19 @@
 using namespace std;
 using namespace testing;
 
+map<string, set<string>> INDEX = {
+  {"hello", {"example.com", "uic.edu"}},
+  {"there", {"example.com"}},
+  {"according", {"uic.edu"}},
+  {"to", {"uic.edu"}},
+  {"all", {"example.com", "uic.edu", "random.org"}},
+  {"known", {"uic.edu"}},
+  {"laws", {"random.org"}},
+  {"of", {"random.org"}},
+  {"aviation", {"random.org"}},
+  {"a", {"uic.edu", "random.org"}},
+};
+
 TEST(CleanToken, BeginningAndEndPunct) {
   ASSERT_THAT(cleanToken(".HELLO."), StrEq("hello"));
   ASSERT_THAT(cleanToken("..heLlo..."), StrEq("hello"));
@@ -15,7 +28,8 @@ TEST(CleanToken, BeginningAndEndPunct) {
 }
 
 TEST(CleanToken, MiddleAndEndPunct) {
-  ASSERT_THAT(cleanToken(".HELLO.WORLD."), StrEq("hello.world"));
+  ASSERT_THAT(cleanToken("HELLO.WORLD"), StrEq("hello.world"));
+  ASSERT_THAT(cleanToken("HELLO.WORLD.!!"), StrEq("hello.world"));
   ASSERT_THAT(cleanToken("..heLlo...woRld"), StrEq("hello...world"));
   ASSERT_THAT(cleanToken("!?hellO.\"World!?"), StrEq("hello.\"world"));
 }

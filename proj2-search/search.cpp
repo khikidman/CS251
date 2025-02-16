@@ -14,7 +14,7 @@ using namespace std;
 string cleanToken(const string& token) {
   string result;
   int numLetters = 0;
-  
+
   int start = 0;
   while (start < token.size() && ispunct(token[start])) {
     start++;
@@ -95,8 +95,14 @@ set<string> findQueryMatches(const map<string, set<string>>& index,
   set<string> result;
 
   for (const string& token : searchQueryTokens) {
-    auto it = index.find(cleanToken(token));
-    if (it == index.end()) continue;
+    string cleanedToken = cleanToken(token);
+    auto it = index.find(cleanedToken);
+    if (it == index.end()) {
+      if (token[0] == '+') {
+        result = {};
+      }
+      continue;
+    }
 
     set<string> temp;
 
