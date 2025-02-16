@@ -1,11 +1,12 @@
 {
   "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google }",
   "[cpp]": {
-    "editor.wordBasedSuggestions": "off",
+    "editor.wordBasedSuggestions": "allDocuments",
     "editor.suggest.insertMode": "replace",
     "editor.semanticHighlighting.enabled": true,
     "editor.tabSize": 2,
     "editor.formatOnSave": true,
+    "editor.hover.enabled": true,
   },
   "C_Cpp.default.compilerPath": "/usr/bin/clang++",
   "debug.onTaskErrors": "abort",
