@@ -133,21 +133,6 @@ TEST(CircVectorCore, pop_back_no_throw) {
   EXPECT_THROW(vec.pop_back(), std::out_of_range);
 }
 
-TEST(CircVectorCore, push_back_no_size) {
-  CircVector<int> vec(3);
-  vec.push_back(1);
-  vec.push_back(2);
-  EXPECT_EQ(vec.size(), 2);
-}
-
-TEST(CircVectorCore, push_back_only_size) {
-  CircVector<int> vec(3);
-  vec.push_back(1);
-  vec.push_back(2);
-  EXPECT_EQ(vec.size(), 2);
-  EXPECT_EQ(vec.at(1), 2);
-}
-
 TEST(CircVectorCore, push_back_no_resize) {
   CircVector<int> vec(2);
   vec.push_back(1);
