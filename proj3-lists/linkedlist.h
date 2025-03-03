@@ -13,21 +13,21 @@ class LinkedList {
   class Node {
    public:
     T data;
-    Node *next;
+    Node* next;
 
     Node(T data) {
       this->data = data;
       this->next = nullptr;
     }
 
-    Node(T data, Node *next) {
+    Node(T data, Node* next) {
       this->data = data;
       this->next = next;
     }
   };
 
   size_t list_size;
-  Node *list_front;
+  Node* list_front;
 
  public:
   /**
@@ -88,7 +88,7 @@ class LinkedList {
    */
   T pop_front() {
     if (this->empty()) {
-      throw out_of_range("pop_front() called on empty list.");
+      throw std::runtime_error("pop_front() called on empty list.");
     }
 
     Node* oldFront = this->list_front;
@@ -97,7 +97,7 @@ class LinkedList {
     this->list_front = oldFront->next;
     delete oldFront;
     this->list_size--;
-    
+
     return oldData;
   }
 
@@ -108,7 +108,7 @@ class LinkedList {
    */
   T pop_back() {
     if (this->empty()) {
-      throw out_of_range("pop_back() called on empty list.");
+      throw runtime_error("pop_back() called on empty list.");
     }
 
     Node* curr = this->list_front;
@@ -162,7 +162,7 @@ class LinkedList {
    *
    * If the index is invalid, throws `out_of_range`.
    */
-  T &at(size_t index) const {
+  T& at(size_t index) const {
     if (index >= this->size() || index < 0) {
       throw out_of_range("at() invalid index access attempt");
     }
@@ -182,13 +182,14 @@ class LinkedList {
    *
    * Must run in O(N) time.
    */
-  LinkedList(const LinkedList &other) {
+  LinkedList(const LinkedList& other) {
     this->list_front = nullptr;
+    this->list_size = 0;
 
     if (other.empty()) {
       return;
     }
-    
+
     Node* curr = other.list_front;
     Node* prev = nullptr;
 
@@ -204,8 +205,7 @@ class LinkedList {
       prev = newCurr;
       curr = curr->next;
       this->list_size++;
-      
-    } 
+    }
   }
 
   /**
@@ -214,7 +214,7 @@ class LinkedList {
    *
    * Must run in O(N) time.
    */
-  LinkedList &operator=(const LinkedList &other) {
+  LinkedList& operator=(const LinkedList& other) {
     if (this == &other) {
       return *this;
     }
@@ -240,8 +240,7 @@ class LinkedList {
       prev = newCurr;
       curr = curr->next;
       this->list_size++;
-      
-    } 
+    }
 
     return *this;
   }
@@ -253,7 +252,7 @@ class LinkedList {
    */
   string to_string() const {
     string result = "[";
-    
+
     Node* curr = this->list_front;
 
     while (curr != nullptr) {
@@ -272,7 +271,7 @@ class LinkedList {
    * Searches the `LinkedList` for the first matching element, and returns its
    * index. If no match is found, returns "-1".
    */
-  int find(const T &data) {
+  int find(const T& data) {
     int index = 0;
 
     Node* curr = this->list_front;
@@ -315,6 +314,7 @@ class LinkedList {
 
     prev->next = curr->next;
     delete curr;
+    this->list_size--;
   }
 
   /**
@@ -349,7 +349,7 @@ class LinkedList {
     if (this->size() == 0 || this->size() == 1) {
       return;
     }
-    
+
     Node* curr = this->list_front;
     Node* del = nullptr;
 
@@ -366,7 +366,7 @@ class LinkedList {
    * Returns a pointer to the node at the front of the `LinkedList`. For
    * autograder testing purposes only.
    */
-  void *front() const {
+  void* front() const {
     return this->list_front;
   }
 };

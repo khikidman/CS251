@@ -80,6 +80,11 @@
     "streambuf": "cpp",
     "typeinfo": "cpp",
     "variant": "cpp",
-    "algorithm": "cpp"
+    "algorithm": "cpp",
+    "__config": "cpp",
+    "__debug": "cpp",
+    "atomic": "cpp",
+    "exception": "cpp",
+    "system_error": "cpp"
   }
 }

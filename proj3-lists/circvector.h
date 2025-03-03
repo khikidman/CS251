@@ -19,10 +19,10 @@ class CircVector {
   // You may also find a "wrapping" function helpful.
   void resize() {
     size_t new_capacity = this->capacity * 2;
-    T* new_data = new T[new_capacity];
+    T *new_data = new T[new_capacity];
 
     for (size_t i = 0; i < vec_size; i++) {
-        new_data[i] = this->data[(this->front_idx + i) % this->capacity];
+      new_data[i] = this->data[(this->front_idx + i) % this->capacity];
     }
 
     delete[] this->data;
@@ -110,7 +110,7 @@ class CircVector {
    */
   T pop_front() {
     if (this->empty()) {
-      throw out_of_range("pop_front() called on empty CircVector");
+      throw runtime_error("pop_front() called on empty CircVector");
     }
     T front_elem = this->data[this->front_idx];
     this->front_idx = (this->front_idx + 1) % this->capacity;
@@ -125,7 +125,7 @@ class CircVector {
    */
   T pop_back() {
     if (this->empty()) {
-      throw out_of_range("pop_back() called on empty CircVector");
+      throw runtime_error("pop_back() called on empty CircVector");
     }
     size_t back_idx = (this->front_idx + this->vec_size - 1) % capacity;
     T back_elem = this->data[back_idx];
@@ -137,10 +137,6 @@ class CircVector {
    * Removes all elements from the `CircVector`.
    */
   void clear() {
-    if (this->data != nullptr) {
-      delete[] this->data;
-      this->data = nullptr;
-    }
     vec_size = 0;
     front_idx = 0;
   }
@@ -149,7 +145,7 @@ class CircVector {
    * Destructor. Clears all allocated memory.
    */
   ~CircVector() {
-    this->clear();
+    delete[] this->data;
   }
 
   /**
@@ -175,7 +171,8 @@ class CircVector {
     this->front_idx = other.front_idx;
     this->data = new T[other.capacity];
     for (int i = 0; i < other.vec_size; i++) {
-      this->data[(this->front_idx + i) % this->capacity] = other.data[(other.front_idx + i) % other.capacity];
+      this->data[(this->front_idx + i) % this->capacity] =
+          other.data[(other.front_idx + i) % other.capacity];
     }
   }
 
@@ -189,15 +186,16 @@ class CircVector {
     if (this == &other) {
       return *this;
     }
-    
-    this->clear();
+
+    delete[] this->data;
 
     this->vec_size = other.vec_size;
     this->capacity = other.capacity;
     this->front_idx = other.front_idx;
     this->data = new T[other.capacity];
     for (int i = 0; i < other.vec_size; i++) {
-      this->data[(this->front_idx + i) % this->capacity] = other.data[(other.front_idx + i) % other.capacity];
+      this->data[(this->front_idx + i) % this->capacity] =
+          other.data[(other.front_idx + i) % other.capacity];
     }
     return *this;
   }
@@ -243,7 +241,8 @@ class CircVector {
     }
 
     for (int i = index; i < this->vec_size - 1; i++) {
-      this->data[(this->front_idx + i) % capacity] = this->data[(front_idx + i + 1) % capacity];
+      this->data[(this->front_idx + i) % capacity] =
+          this->data[(front_idx + i + 1) % capacity];
     }
 
     this->vec_size--;
@@ -263,7 +262,8 @@ class CircVector {
     }
 
     for (int i = this->vec_size; i > index + 1; i--) {
-      this->data[(this->front_idx + i) % this->capacity] = this->data[(front_idx + i - 1) % capacity];
+      this->data[(this->front_idx + i) % this->capacity] =
+          this->data[(front_idx + i - 1) % capacity];
     }
 
     this->data[(this->front_idx + index + 1) % this->capacity] = elem;

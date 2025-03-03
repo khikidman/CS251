@@ -31,7 +31,6 @@ TEST(LinkedListCore, empty_true) {
   EXPECT_FALSE(list.empty());
 }
 
-
 TEST(LinkedListCore, push_front_no_size) {
   LinkedList<int> list;
   list.push_front(10);
@@ -92,12 +91,12 @@ TEST(LinkedListCore, pop_back_no_size) {
 
 TEST(LinkedListCore, pop_front_no_throw) {
   LinkedList<int> list;
-  EXPECT_THROW(list.pop_front(), std::out_of_range);
+  EXPECT_THROW(list.pop_front(), std::runtime_error);
 }
 
 TEST(LinkedListCore, pop_back_no_throw) {
   LinkedList<int> list;
-  EXPECT_THROW(list.pop_back(), std::out_of_range);
+  EXPECT_THROW(list.pop_back(), std::runtime_error);
 }
 
 TEST(LinkedListCore, pop_back_on_one) {
@@ -153,7 +152,7 @@ TEST(LinkedListCore, at_wrong_value) {
 TEST(LinkedListCore, SizeIsO_N) {
   LinkedList<int> list;
   for (int i = 0; i < 1000; ++i) {
-      list.push_back(i);
+    list.push_back(i);
   }
   EXPECT_EQ(list.size(), 1000);
 }
@@ -218,7 +217,8 @@ TEST(LinkedListAugmented, AssignmentOperatorHandlesSelfAssignment) {
   EXPECT_EQ(copy.at(1), 2);
 }
 
-TEST(LinkedListAugmented, AssignmentOperatorWithChangesToOriginalAfterAssignment) {
+TEST(LinkedListAugmented,
+     AssignmentOperatorWithChangesToOriginalAfterAssignment) {
   LinkedList<int> original;
   original.push_back(1);
   original.push_back(2);
