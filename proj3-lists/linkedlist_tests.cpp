@@ -9,7 +9,7 @@ using namespace testing;
 TEST(LinkedListCore, ctor_size) {
   LinkedList<int> list;
   EXPECT_EQ(list.size(), 0);
-  ASSERT_THAT(list_size(), Eq(0));
+  ASSERT_THAT(list.size(), Eq(0));
 }
 
 TEST(LinkedListCore, size_fixed) {
