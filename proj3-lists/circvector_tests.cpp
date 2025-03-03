@@ -6,39 +6,24 @@
 using namespace std;
 using namespace testing;
 
-TEST(CircVectorCore, ConstructorInitializesSize) {
-  CircVector<int> vec;
-  EXPECT_EQ(vec.size(), 0);
-  EXPECT_EQ(vec.get_capacity(), 10);
-}
-
-TEST(CircVectorCore, ConstructorWithCustomCapacity) {
+TEST(CircVectorCore, ctor_size) {
   CircVector<int> vec(20);
   EXPECT_EQ(vec.size(), 0);
   EXPECT_EQ(vec.get_capacity(), 20);
 }
 
-TEST(CircVectorCore, EmptyReturnsTrueForEmptyVector) {
+TEST(CircVectorCore, empty_false) {
   CircVector<int> vec;
   EXPECT_TRUE(vec.empty());
 }
 
-TEST(CircVectorCore, EmptyReturnsFalseAfterPushBack) {
+TEST(CircVectorCore, empty_true) {
   CircVector<int> vec;
   vec.push_back(1);
   EXPECT_FALSE(vec.empty());
 }
 
-TEST(CircVectorCore, SizeCorrectnessCheck) {
-  CircVector<int> vec;
-  EXPECT_EQ(vec.size(), 0);
-  vec.push_back(1);
-  EXPECT_EQ(vec.size(), 1);
-  vec.push_front(2);
-  EXPECT_EQ(vec.size(), 2);
-}
-
-TEST(CircVectorCore, PushFrontUpdatesSize) {
+TEST(CircVectorCore, size_fixed) {
   CircVector<int> vec;
   vec.push_front(1);
   EXPECT_EQ(vec.size(), 1);
@@ -46,7 +31,7 @@ TEST(CircVectorCore, PushFrontUpdatesSize) {
   EXPECT_EQ(vec.size(), 2);
 }
 
-TEST(CircVectorCore, PushBackUpdatesSize) {
+TEST(CircVectorCore, push_back_no_size) {
   CircVector<int> vec;
   vec.push_back(1);
   EXPECT_EQ(vec.size(), 1);
@@ -54,7 +39,16 @@ TEST(CircVectorCore, PushBackUpdatesSize) {
   EXPECT_EQ(vec.size(), 2);
 }
 
-TEST(CircVectorCore, PushFrontUpdatesSizeWithResize) {
+TEST(CircVectorCore, push_back_only_size) {
+  CircVector<int> vec(2);
+  vec.push_back(1);
+  vec.push_back(2);
+  vec.push_back(3);
+  EXPECT_EQ(vec.size(), 3);
+  EXPECT_EQ(vec.at(1), 2);
+}
+
+TEST(CircVectorCore, push_front_no_size) {
   CircVector<int> vec(2);
   vec.push_back(1);
   vec.push_back(2);
@@ -62,15 +56,17 @@ TEST(CircVectorCore, PushFrontUpdatesSizeWithResize) {
   EXPECT_EQ(vec.size(), 3);
 }
 
-TEST(CircVectorCore, PushBackUpdatesSizeWithResize) {
+TEST(CircVectorCore, push_front_only_size) {
   CircVector<int> vec(2);
   vec.push_back(1);
-  vec.push_back(2);
-  vec.push_back(3);
+  vec.push_front(2);
+  vec.push_front(3);
   EXPECT_EQ(vec.size(), 3);
+  EXPECT_EQ(vec.at(1), 2);
 }
 
-TEST(CircVectorCore, ClearResetsSize) {
+
+TEST(CircVectorCore, clear_no_reset_size) {
   CircVector<int> vec;
   vec.push_back(1);
   vec.push_back(2);
@@ -79,23 +75,31 @@ TEST(CircVectorCore, ClearResetsSize) {
   EXPECT_EQ(vec.size(), 1);
 }
 
-TEST(CircVectorCore, DestructorClearsMemory) {
+TEST(CircVectorCore, dtor_nothing) {
   {
       CircVector<int> vec(10);
       vec.push_back(1);
       vec.push_back(2);
-  } // Destructor should be called here
-  EXPECT_TRUE(true);  // Just check that there are no memory leaks.
+  }
+  EXPECT_TRUE(true);
 }
 
-TEST(CircVectorCore, AtThrowsOutOfRangeForInvalidIndex) {
+TEST(CircVectorCore, at_no_throw) {
   CircVector<int> vec;
   vec.push_back(1);
   vec.push_back(2);
-  EXPECT_THROW(vec.at(2), std::out_of_range);
+  vec.push_back(3);
+  EXPECT_THROW(vec.at(3), std::out_of_range);
 }
 
-TEST(CircVectorCore, AtReturnsCorrectValue) {
+TEST(CircVectorCore, at_upper_bound) {
+  CircVector<int> vec;
+  vec.push_back(1);
+  vec.push_back(2);
+  EXPECT_THROW(vec.at(8), std::out_of_range);
+}
+
+TEST(CircVectorCore, at_wrong_value) {
   CircVector<int> vec;
   vec.push_back(1);
   vec.push_back(2);
@@ -103,7 +107,7 @@ TEST(CircVectorCore, AtReturnsCorrectValue) {
   EXPECT_EQ(vec.at(1), 2);
 }
 
-TEST(CircVectorCore, PopFrontAltersSize) {
+TEST(CircVectorCore, pop_front_no_size) {
   CircVector<int> vec;
   vec.push_back(1);
   vec.push_back(2);
@@ -111,12 +115,12 @@ TEST(CircVectorCore, PopFrontAltersSize) {
   EXPECT_EQ(vec.size(), 1);
 }
 
-TEST(CircVectorCore, PopFrontThrowsExceptionWhenEmpty) {
+TEST(CircVectorCore, pop_front_no_throw) {
   CircVector<int> vec;
   EXPECT_THROW(vec.pop_front(), std::out_of_range);
 }
 
-TEST(CircVectorCore, PopBackAltersSize) {
+TEST(CircVectorCore, pop_back_no_size) {
   CircVector<int> vec;
   vec.push_back(1);
   vec.push_back(2);
@@ -124,20 +128,36 @@ TEST(CircVectorCore, PopBackAltersSize) {
   EXPECT_EQ(vec.size(), 1);
 }
 
-TEST(CircVectorCore, PopBackThrowsExceptionWhenEmpty) {
+TEST(CircVectorCore, pop_back_no_throw) {
   CircVector<int> vec;
   EXPECT_THROW(vec.pop_back(), std::out_of_range);
 }
 
-TEST(CircVectorCore, PushBackResizesWhenFull) {
+TEST(CircVectorCore, push_back_no_size) {
+  CircVector<int> vec(3);
+  vec.push_back(1);
+  vec.push_back(2);
+  EXPECT_EQ(vec.size(), 2);
+}
+
+TEST(CircVectorCore, push_back_only_size) {
+  CircVector<int> vec(3);
+  vec.push_back(1);
+  vec.push_back(2);
+  EXPECT_EQ(vec.size(), 2);
+  EXPECT_EQ(vec.at(1), 2);
+}
+
+TEST(CircVectorCore, push_back_no_resize) {
   CircVector<int> vec(2);
   vec.push_back(1);
   vec.push_back(2);
   vec.push_back(3);
   EXPECT_EQ(vec.size(), 3);
+  EXPECT_EQ(vec.get_capacity(), 4);
 }
 
-TEST(CircVectorCore, PushBackWorksWhenArrayWrapsAround) {
+TEST(CircVectorCore, push_back_no_wrap) {
   CircVector<int> vec(3);
   vec.push_back(1);
   vec.push_back(2);
@@ -147,16 +167,26 @@ TEST(CircVectorCore, PushBackWorksWhenArrayWrapsAround) {
   EXPECT_EQ(vec.at(2), 4);
 }
 
-TEST(CircVectorCore, PushFrontWorksWhenFrontIdxIsZero) {
-  CircVector<int> vec(3);
-  vec.push_back(1);
-  vec.push_back(2);
+TEST(CircVectorCore, push_front_no_resize) {
+  CircVector<int> vec(2);
+  vec.push_front(1);
+  vec.push_front(2);
   vec.push_front(3);
-  EXPECT_EQ(vec.at(0), 3);
-  EXPECT_EQ(vec.at(1), 1);
+  EXPECT_EQ(vec.size(), 3);
+  EXPECT_EQ(vec.get_capacity(), 4);
 }
 
-TEST(CircVectorCore, PopBackWorksWhenArrayWrapsAround) {
+TEST(CircVectorCore, push_front_no_wrap) {
+  CircVector<int> vec(3);
+  vec.push_front(1);
+  vec.push_back(2);
+  vec.push_back(3);  // Vector is full, should resize
+  vec.pop_front();  // Front index will be 1
+  vec.push_front(4);  // Should go to index 0
+  EXPECT_EQ(vec.at(0), 4);
+}
+
+TEST(CircVectorCore, pop_back_no_wrap) {
   CircVector<int> vec(3);
   vec.push_back(1);
   vec.push_back(2);
@@ -164,15 +194,6 @@ TEST(CircVectorCore, PopBackWorksWhenArrayWrapsAround) {
   vec.pop_front();  // front_idx will be 1
   vec.push_back(4);  // Should wrap around to the back
   EXPECT_EQ(vec.pop_back(), 4);
-}
-
-TEST(CircVectorCore, PopFrontWorksWhenFrontIdxIsLastIndex) {
-  CircVector<int> vec(3);
-  vec.push_back(1);
-  vec.push_back(2);
-  vec.push_back(3);
-  vec.pop_front();  // Should handle front_idx wrap-around correctly
-  EXPECT_EQ(vec.pop_front(), 2);
 }
 
 // Augmented tests
